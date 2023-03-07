@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "hoko"
+version = "0.1.0"
+description = ""
+authors = ["DanilaDanila <manakov.danila@phystech.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.24.2"
+pandas = "^1.5.3"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+isort = "^5.12.0"
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
