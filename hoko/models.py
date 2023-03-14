@@ -66,7 +66,9 @@ class DecisionTextTreeNode:
             # return np.random.choice(
             #     a=self.y_values, p=self.y_probs, size=X_text.shape[0]
             # )
-            return np.full(shape=X_text.shape[0], fill_value=self.y_values[np.argmax(self.y_probs)])
+            return np.full(
+                shape=X_text.shape[0], fill_value=self.y_values[np.argmax(self.y_probs)]
+            )
         elif self.type == "stump":
             return None
 
@@ -75,6 +77,12 @@ class DecisionTextTreeNode:
             return np.array(list(map(lambda x: self.kword in x, X_text)))
         elif self.type == "bag":
             return None
+
+    def compile(self, prefix=""):
+        if self.type == "bag":
+            yield f"{prefix} then '{self.predict(np.full(shape=1, fill_value=0))[0]}'"
+        if self.type == "stump":
+            raise Exception("logical error")
 
 
 class DecisionTextTree:
@@ -145,3 +153,14 @@ class DecisionTextTree:
             Y[~X_map] = self.right.predict(X_right)
 
             return Y
+
+    def compile(self, prefix="when 1=1"):
+        if self.node.type == "bag":
+            yield from self.node.compile(prefix)
+        elif self.node.type == "stump":
+            yield from self.left.compile(
+                f"{prefix} and {{{{ feature }}}} like '%{self.node.kword}%'"
+            )
+            yield from self.right.compile(
+                f"{prefix} and {{{{ feature }}}} not like '%{self.node.kword}%'"
+            )
